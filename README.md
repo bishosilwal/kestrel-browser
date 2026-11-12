@@ -236,6 +236,12 @@ plain files; nothing is a database.
   launch; right-click → Open.
 - Cosmetic ad rules are deliberately conservative, so some blocked slots leave a gap.
 
+## Credits
+
+Lantern is a fork of [Kestrel](https://github.com/bishosilwal/kestrel-browser), a
+minimal, low-memory macOS browser on system WebKit by Bisho Silwal. The original
+project is MIT licensed, and that license carries over to this fork.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
