@@ -66,7 +66,7 @@ enum MemoryMonitor {
         }
         var s = MemorySample()
         let me = getpid()
-        // Normally WebKit's XPC helpers are attributed straight to us. When Kestrel is
+        // Normally WebKit's XPC helpers are attributed straight to us. When Lantern is
         // started from a shell instead of LaunchServices, responsibility is inherited
         // from that shell, so fall back to our own responsible ancestor.
         let myResponsible = responsibility_get_pid_responsible_for_pid(me)

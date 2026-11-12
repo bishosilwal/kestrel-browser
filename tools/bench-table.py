@@ -19,7 +19,7 @@ for line in TSV.read_text().splitlines():
     label, key, value = line.split("\t")
     data.setdefault(label, {})[key] = float(value)
 
-K, KN, C = "Kestrel", "Kestrel (blocker off)", "Google Chrome"
+K, KN, C = "Lantern", "Lantern (blocker off)", "Google Chrome"
 
 
 def get(label, key):
@@ -66,10 +66,10 @@ rows = [
         lambda v: f"{v:.2f} s", better="faster"),
 ]
 rows = [r for r in rows if r]
-rows.append(f"| App on disk | {disk('Kestrel.app')} | "
+rows.append(f"| App on disk | {disk('Lantern.app')} | "
             f"{disk('/Applications/Google Chrome.app')} | **~2,400x smaller** |")
 
-print("| | Kestrel | Chrome 151 | |")
+print("| | Lantern | Chrome 151 | |")
 print("|---|---|---|---|")
 print("\n".join(rows))
 
@@ -77,14 +77,14 @@ kn = get(KN, "awake_footprint_bytes")
 if kn:
     print()
     print("Isolating the ad blocker, since that is the obvious objection — the same five "
-          "pages in Kestrel with blocking **switched off**:")
+          "pages in Lantern with blocking **switched off**:")
     print()
     print("| | Memory, 5 tabs loaded |")
     print("|---|---|")
-    print(f"| Kestrel, blocker on | {fmt_mem(get(K, 'awake_footprint_bytes'))} |")
-    print(f"| Kestrel, blocker off | {fmt_mem(kn)} |")
+    print(f"| Lantern, blocker on | {fmt_mem(get(K, 'awake_footprint_bytes'))} |")
+    print(f"| Lantern, blocker off | {fmt_mem(kn)} |")
     print(f"| Chrome (no blocking, no extensions) | {fmt_mem(get(C, 'awake_footprint_bytes'))} |")
     print()
-    print(f"So blocking accounts for part of it, but Kestrel with the blocker off still "
+    print(f"So blocking accounts for part of it, but Lantern with the blocker off still "
           f"uses **{get(C, 'awake_footprint_bytes')/kn:.1f}x less** memory than Chrome. "
           f"The bulk of the win is architectural.")

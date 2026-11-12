@@ -2,10 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleName</key><string>Kestrel</string>
-  <key>CFBundleDisplayName</key><string>Kestrel</string>
-  <key>CFBundleExecutable</key><string>Kestrel</string>
-  <key>CFBundleIdentifier</key><string>com.kestrel.browser</string>
+  <key>CFBundleName</key><string>Lantern</string>
+  <key>CFBundleDisplayName</key><string>Lantern</string>
+  <key>CFBundleExecutable</key><string>Lantern</string>
+  <key>CFBundleIdentifier</key><string>com.lantern.browser</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>1.0</string>
   <key>CFBundleVersion</key><string>1.0</string>

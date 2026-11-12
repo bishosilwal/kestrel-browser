@@ -1,7 +1,7 @@
 #!/bin/bash
 # Report real memory footprint (the number Activity Monitor shows) for browsers.
-#   ./tools/kmem                       -> Kestrel, Chrome, Safari
-#   ./tools/kmem Kestrel "Google Chrome"
+#   ./tools/kmem                       -> Lantern, Chrome, Safari
+#   ./tools/kmem Lantern "Google Chrome"
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p build

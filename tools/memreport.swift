@@ -1,8 +1,8 @@
 // Reports real memory footprint and cumulative CPU time for browsers, attributing
 // helper processes the way Activity Monitor does.
 //
-//   memreport                          Kestrel, Google Chrome, Safari
-//   memreport Kestrel "Google Chrome"  specific apps
+//   memreport                          Lantern, Google Chrome, Safari
+//   memreport Lantern "Google Chrome"  specific apps
 //   memreport --json ...               one JSON line per app, for scripting
 import Foundation
 import Darwin
@@ -47,7 +47,7 @@ func path(of pid: pid_t) -> String {
 var args = Array(CommandLine.arguments.dropFirst())
 let asJSON = args.contains("--json")
 args.removeAll { $0 == "--json" }
-let targets = args.isEmpty ? ["Kestrel", "Google Chrome", "Safari"] : args
+let targets = args.isEmpty ? ["Lantern", "Google Chrome", "Safari"] : args
 
 let reported = proc_listallpids(nil, 0)
 var pids = [pid_t](repeating: 0, count: Int(reported) * 2 + 64)

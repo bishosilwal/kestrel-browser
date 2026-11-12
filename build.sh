@@ -1,11 +1,11 @@
 #!/bin/bash
-# Build Kestrel into a runnable .app bundle. No dependencies, no package manager.
+# Build Lantern into a runnable .app bundle. No dependencies, no package manager.
 set -euo pipefail
 cd "$(dirname "$0")"
 
-APP="Kestrel.app"
-NAME="Kestrel"
-BUNDLE_ID="com.kestrel.browser"
+APP="Lantern.app"
+NAME="Lantern"
+BUNDLE_ID="com.lantern.browser"
 VERSION="1.0"
 DEST="${1:-.}"
 

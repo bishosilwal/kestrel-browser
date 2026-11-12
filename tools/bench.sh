@@ -1,5 +1,5 @@
 #!/bin/bash
-# Reproducible memory/CPU comparison: Kestrel vs Google Chrome, same pages, same order.
+# Reproducible memory/CPU comparison: Lantern vs Google Chrome, same pages, same order.
 #
 # Chrome runs on a throwaway --user-data-dir so your real profile, history and session
 # are never touched. That also means Chrome runs with no extensions, which makes it
@@ -12,7 +12,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 
 PAGES=(
-  "https://en.wikipedia.org/wiki/Kestrel"
+  "https://en.wikipedia.org/wiki/Lantern"
   "https://news.ycombinator.com"
   "https://github.com/trending"
   "https://www.theverge.com"
@@ -20,9 +20,9 @@ PAGES=(
 )
 SETTLE=${SETTLE:-45}         # let pages finish loading before measuring
 CPU_WINDOW=${CPU_WINDOW:-30} # both browsers fully awake: apples to apples
-IDLE_WAIT=${IDLE_WAIT:-380}  # past Kestrel's 5 min sleep threshold
-KDIR="$HOME/Library/Application Support/Kestrel"
-CHROME_PROFILE="/tmp/kestrel-bench-chrome-profile"
+IDLE_WAIT=${IDLE_WAIT:-380}  # past Lantern's 5 min sleep threshold
+KDIR="$HOME/Library/Application Support/Lantern"
+CHROME_PROFILE="/tmp/lantern-bench-chrome-profile"
 OUT=build/bench.tsv
 mkdir -p build
 [ -x build/waitwindow ] || swiftc -O -swift-version 5 -o build/waitwindow tools/waitwindow.swift
@@ -31,7 +31,7 @@ mkdir -p build
 restore_config() {
   python3 -c "
 import json, os
-p = os.path.expanduser('~/Library/Application Support/Kestrel/config.json')
+p = os.path.expanduser('~/Library/Application Support/Lantern/config.json')
 try: d = json.load(open(p))
 except Exception: raise SystemExit
 d['blockAdsAndTrackers'] = True
@@ -42,13 +42,13 @@ json.dump(d, open(p, 'w'), indent=2)
 }
 trap restore_config EXIT INT TERM
 
-# Kestrel's sleep threshold is lowered for the benchmark so a run takes minutes rather
+# Lantern's sleep threshold is lowered for the benchmark so a run takes minutes rather
 # than an hour. It is recorded in the results so the number is never implicit.
 HIBERNATE_MIN=${HIBERNATE_MIN:-1}
 set_hibernate() {
   python3 -c "
 import json, os, sys
-p = os.path.expanduser('~/Library/Application Support/Kestrel/config.json')
+p = os.path.expanduser('~/Library/Application Support/Lantern/config.json')
 d = json.load(open(p)); d['hibernateAfterMinutes'] = float(sys.argv[1])
 json.dump(d, open(p, 'w'), indent=2)
 " "$1"
@@ -63,13 +63,13 @@ field() { python3 -c "import json,sys; d=json.loads(sys.stdin.read()); print(d.g
 # leaves a stale SingletonLock, which makes the next launch bail out and measure zero.
 quit_all() {
   osascript -e 'quit app "Google Chrome"' >/dev/null 2>&1
-  osascript -e 'quit app "Kestrel"' >/dev/null 2>&1
+  osascript -e 'quit app "Lantern"' >/dev/null 2>&1
   local i=0
   while [ $i -lt 40 ]; do
-    pgrep -f "Kestrel.app/Contents/MacOS" >/dev/null 2>&1 ||       pgrep -f "Google Chrome.app/Contents/MacOS" >/dev/null 2>&1 || break
+    pgrep -f "Lantern.app/Contents/MacOS" >/dev/null 2>&1 ||       pgrep -f "Google Chrome.app/Contents/MacOS" >/dev/null 2>&1 || break
     sleep 0.5; i=$((i+1))
   done
-  pkill -f "Kestrel.app/Contents/MacOS" >/dev/null 2>&1
+  pkill -f "Lantern.app/Contents/MacOS" >/dev/null 2>&1
   pkill -f "Google Chrome" >/dev/null 2>&1
   sleep 2
   rm -f "$CHROME_PROFILE"/Singleton* 2>/dev/null
@@ -88,8 +88,8 @@ wait_running() {
 }
 
 # --- launch helpers -----------------------------------------------------------
-kestrel_launch()  { rm -f "$KDIR/session.json"; open -a /Applications/Kestrel.app "$@"; }
-kestrel_cmd()     { echo "open -a /Applications/Kestrel.app"; }
+lantern_launch()  { rm -f "$KDIR/session.json"; open -a /Applications/Lantern.app "$@"; }
+lantern_cmd()     { echo "open -a /Applications/Lantern.app"; }
 CHROME_BIN="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 chrome_launch() {
   # Refuse to start a second instance: a duplicate would forward URLs to whatever
@@ -142,7 +142,7 @@ measure() {
           --user-data-dir="$CHROME_PROFILE" --no-first-run --no-default-browser-check)
   else
     rm -f "$KDIR/session.json"
-    t=$(./build/waitwindow "$owner" 40 -- open -a /Applications/Kestrel.app)
+    t=$(./build/waitwindow "$owner" 40 -- open -a /Applications/Lantern.app)
   fi
   emit "$label" launch_seconds "$t"
   echo "    cold launch to window: ${t}s"
@@ -190,7 +190,7 @@ measure() {
 }
 
 # --- run ----------------------------------------------------------------------
-# ONLY=kestrel|chrome runs a subset; APPEND=1 keeps existing rows (same page set and
+# ONLY=lantern|chrome runs a subset; APPEND=1 keeps existing rows (same page set and
 # timings required, or the table mixes methodologies).
 [ "${APPEND:-0}" = "1" ] || : > "$OUT"
 rm -rf "$CHROME_PROFILE"
@@ -198,29 +198,29 @@ echo "pages: ${#PAGES[@]} | settle ${SETTLE}s | cpu window ${CPU_WINDOW}s | idle
 
 python3 - <<'PY'
 import json, os
-p = os.path.expanduser("~/Library/Application Support/Kestrel/config.json")
+p = os.path.expanduser("~/Library/Application Support/Lantern/config.json")
 d = json.load(open(p)); d["blockAdsAndTrackers"] = True; json.dump(d, open(p, "w"), indent=2)
 PY
 set_hibernate "$HIBERNATE_MIN"
 emit "meta" hibernate_minutes "$HIBERNATE_MIN"
 emit "meta" pages "${#PAGES[@]}"
 emit "meta" idle_wait_seconds "$IDLE_WAIT"
-if [ "${ONLY:-all}" = "all" ] || [ "${ONLY:-all}" = "kestrel" ]; then
-  measure "Kestrel" "Kestrel" "Kestrel" kestrel_launch
+if [ "${ONLY:-all}" = "all" ] || [ "${ONLY:-all}" = "lantern" ]; then
+  measure "Lantern" "Lantern" "Lantern" lantern_launch
 fi
 
 python3 - <<'PY'
 import json, os
-p = os.path.expanduser("~/Library/Application Support/Kestrel/config.json")
+p = os.path.expanduser("~/Library/Application Support/Lantern/config.json")
 d = json.load(open(p)); d["blockAdsAndTrackers"] = False; json.dump(d, open(p, "w"), indent=2)
 PY
-if [ "${ONLY:-all}" = "all" ] || [ "${ONLY:-all}" = "kestrel" ]; then
-  measure "Kestrel (blocker off)" "Kestrel" "Kestrel" kestrel_launch
+if [ "${ONLY:-all}" = "all" ] || [ "${ONLY:-all}" = "lantern" ]; then
+  measure "Lantern (blocker off)" "Lantern" "Lantern" lantern_launch
 fi
 
 python3 - <<'PY'
 import json, os
-p = os.path.expanduser("~/Library/Application Support/Kestrel/config.json")
+p = os.path.expanduser("~/Library/Application Support/Lantern/config.json")
 d = json.load(open(p)); d["blockAdsAndTrackers"] = True; json.dump(d, open(p, "w"), indent=2)
 PY
 

@@ -336,7 +336,7 @@ extension Tab: WKNavigationDelegate {
 
     func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         // The content process was killed (usually by memory pressure). Recover in place.
-        NSLog("Kestrel: content process terminated for \(url?.host ?? "?"), reloading")
+        NSLog("Lantern: content process terminated for \(url?.host ?? "?"), reloading")
         webView.reload()
     }
 }

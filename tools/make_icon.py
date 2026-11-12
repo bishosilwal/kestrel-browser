@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Draw a minimal app icon (a kestrel-ish chevron in a rounded square) and pack an .icns."""
+"""Draw a minimal app icon (a chevron in a rounded square) and pack an .icns."""
 import os, subprocess, sys, tempfile
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else "AppIcon.icns"

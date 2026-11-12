@@ -79,7 +79,7 @@ final class Runner: NSObject, WKNavigationDelegate {
 
 let runner = Runner()
 WKContentRuleListStore.default()?.compileContentRuleList(
-    forIdentifier: "kestrel-blocktest", encodedContentRuleList: json) { list, error in
+    forIdentifier: "lantern-blocktest", encodedContentRuleList: json) { list, error in
     if let error { print("compile failed: \(error)"); exit(2) }
     guard let list else { print("no list"); exit(2) }
     print("rule list compiled ok\n")
