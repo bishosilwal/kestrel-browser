@@ -1,6 +1,6 @@
-# Kestrel blocklist — one domain per line, '#' for comments.
-# Matches the domain and all its subdomains. Edit and restart Kestrel to apply.
-# A user copy is created at ~/Library/Application Support/Kestrel/blocked-domains.txt
+# Lantern blocklist — one domain per line, '#' for comments.
+# Matches the domain and all its subdomains. Edit and restart Lantern to apply.
+# A user copy is created at ~/Library/Application Support/Lantern/blocked-domains.txt
 # which takes precedence over this bundled one.
 
 # --- Google advertising / measurement ---

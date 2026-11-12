@@ -71,7 +71,7 @@ enum ContentBlocker {
     static func load(completion: @escaping (WKContentRuleList?) -> Void) {
         guard Config.shared.blockAdsAndTrackers else { completion(nil); return }
         guard let url = domainListURL(), let text = try? String(contentsOf: url, encoding: .utf8) else {
-            NSLog("Kestrel: no blocklist found")
+            NSLog("Lantern: no blocklist found")
             completion(nil); return
         }
         let domains = text.split(separator: "\n")
@@ -81,7 +81,7 @@ enum ContentBlocker {
 
         let json = buildJSON(from: domains)
         let digest = SHA256.hash(data: Data(json.utf8)).compactMap { String(format: "%02x", $0) }.joined()
-        let identifier = "kestrel-block-" + digest.prefix(16)
+        let identifier = "lantern-block-" + digest.prefix(16)
         let store = WKContentRuleListStore.default()
 
         store?.lookUpContentRuleList(forIdentifier: identifier) { list, _ in
@@ -91,7 +91,7 @@ enum ContentBlocker {
                 return
             }
             store?.compileContentRuleList(forIdentifier: identifier, encodedContentRuleList: json) { list, error in
-                if let error { NSLog("Kestrel: blocklist compile failed: \(error.localizedDescription)") }
+                if let error { NSLog("Lantern: blocklist compile failed: \(error.localizedDescription)") }
                 ruleList = list
                 completion(list)
             }

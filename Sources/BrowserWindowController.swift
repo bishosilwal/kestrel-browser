@@ -62,13 +62,13 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
         super.init(window: w)
 
         w.delegate = self
-        w.title = isPrivate ? "Kestrel Private" : "Kestrel"
+        w.title = isPrivate ? "Lantern Private" : "Lantern 🏮"
         w.titleVisibility = .hidden
         w.titlebarAppearsTransparent = true
         w.isMovableByWindowBackground = true
         w.minSize = NSSize(width: 520, height: 380)
         w.tabbingMode = .disallowed          // we manage our own tabs
-        w.setFrameAutosaveName(isPrivate ? "KestrelPrivateWindow" : "KestrelWindow")
+        w.setFrameAutosaveName(isPrivate ? "LanternPrivateWindow" : "LanternWindow")
         w.backgroundColor = .windowBackgroundColor
         if #available(macOS 11.0, *) { w.titlebarSeparatorStyle = .none }
 
@@ -520,7 +520,7 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
         let src = DispatchSource.makeMemoryPressureSource(eventMask: [.warning, .critical], queue: .main)
         src.setEventHandler { [weak self] in
             guard let self else { return }
-            NSLog("Kestrel: memory pressure, sleeping background tabs")
+            NSLog("Lantern: memory pressure, sleeping background tabs")
             self.hibernateBackgroundTabsNow()
             URLCache.shared.removeAllCachedResponses()
         }

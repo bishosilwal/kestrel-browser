@@ -6,7 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private var controllers: [BrowserWindowController] = []
     /// URLs can arrive from LaunchServices before the first window exists (clicking a
-    /// link while Kestrel is closed), so hold them until the window is up.
+    /// link while Lantern is closed), so hold them until the window is up.
     private var isReady = false
     private var pendingURLs: [URL] = []
     private let bookmarksMenu = NSMenu(title: "Bookmarks")
@@ -175,7 +175,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                     self?.front?.showStatus("Couldn\u{2019}t set default: \(err.localizedDescription)")
                 } else {
                     NSWorkspace.shared.setDefaultApplication(at: me, toOpenURLsWithScheme: "https") { _ in }
-                    self?.front?.showStatus("Kestrel is now the default browser")
+                    self?.front?.showStatus("Lantern is now the default browser")
                 }
             }
         }
@@ -184,7 +184,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc func showAbout() {
         let s = MemoryMonitor.sample()
         let a = NSAlert()
-        a.messageText = "Kestrel"
+        a.messageText = "Lantern 🏮"
         a.informativeText = """
         A minimal browser on the system WebKit engine.
 
@@ -261,18 +261,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
 
         // App menu
-        let (_, app) = menu("Kestrel")
-        add(app, "About Kestrel", #selector(showAbout), target: self)
+        let (_, app) = menu("Lantern 🏮")
+        add(app, "About Lantern 🏮", #selector(showAbout), target: self)
         app.addItem(.separator())
         add(app, "Settings\u{2026}", #selector(openSettings), ",", target: self)
         add(app, "Edit Blocklist\u{2026}", #selector(openBlocklist), target: self)
-        add(app, "Make Kestrel the Default Browser", #selector(makeDefaultBrowser), target: self)
+        add(app, "Make Lantern the Default Browser", #selector(makeDefaultBrowser), target: self)
         app.addItem(.separator())
-        add(app, "Hide Kestrel", #selector(NSApplication.hide(_:)), "h")
+        add(app, "Hide Lantern", #selector(NSApplication.hide(_:)), "h")
         add(app, "Hide Others", #selector(NSApplication.hideOtherApplications(_:)), "h", [.command, .option])
         add(app, "Show All", #selector(NSApplication.unhideAllApplications(_:)))
         app.addItem(.separator())
-        add(app, "Quit Kestrel", #selector(NSApplication.terminate(_:)), "q")
+        add(app, "Quit Lantern", #selector(NSApplication.terminate(_:)), "q")
 
         // File
         let (_, file) = menu("File")

@@ -1,6 +1,6 @@
 import AppKit
 
-/// The new-tab page, drawn natively. A blank tab in Kestrel allocates no web
+/// The new-tab page, drawn natively. A blank tab in Lantern allocates no web
 /// process at all -- there is literally nothing to load.
 final class StartView: NSView {
     var onOpen: ((String) -> Void)?
@@ -25,7 +25,7 @@ final class StartView: NSView {
     func rebuild() {
         subviews.forEach { $0.removeFromSuperview() }
 
-        let title = NSTextField(labelWithString: "Kestrel")
+        let title = NSTextField(labelWithString: "Lantern 🏮")
         title.font = .systemFont(ofSize: 30, weight: .semibold)
         title.textColor = .labelColor
         title.alignment = .center

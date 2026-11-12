@@ -3,16 +3,16 @@ meta	pages	5
 meta	settle_seconds	20
 meta	cpu_window_seconds	10
 meta	idle_wait_seconds	100
-Kestrel	launch_seconds	0.34
-Kestrel	idle_footprint_bytes	29804992
-Kestrel	idle_procs	1
-Kestrel	awake_footprint_bytes	735185984
-Kestrel	awake_procs	8
-Kestrel	cpu_awake_ns_per_s	351965.1
-Kestrel	rest_footprint_bytes	247082624
-Kestrel	rest_procs	5
-Kestrel (blocker off)	awake_footprint_bytes	862114176
-Kestrel (blocker off)	awake_procs	8
+Lantern	launch_seconds	0.34
+Lantern	idle_footprint_bytes	29804992
+Lantern	idle_procs	1
+Lantern	awake_footprint_bytes	735185984
+Lantern	awake_procs	8
+Lantern	cpu_awake_ns_per_s	351965.1
+Lantern	rest_footprint_bytes	247082624
+Lantern	rest_procs	5
+Lantern (blocker off)	awake_footprint_bytes	862114176
+Lantern (blocker off)	awake_procs	8
 Google Chrome	launch_seconds	0.41
 Google Chrome	idle_footprint_bytes	422395520
 Google Chrome	idle_procs	10

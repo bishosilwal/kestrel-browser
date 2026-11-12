@@ -1,6 +1,6 @@
 import Foundation
 
-/// User-editable settings, read from ~/Library/Application Support/Kestrel/config.json
+/// User-editable settings, read from ~/Library/Application Support/Lantern/config.json
 /// Missing file => defaults. Nothing here requires a rebuild to change.
 final class Config {
     static let shared = Config()
@@ -18,7 +18,7 @@ final class Config {
 
     static var supportDir: URL = {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("Kestrel", isDirectory: true)
+            .appendingPathComponent("Lantern", isDirectory: true)
         try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
         return base
     }()
