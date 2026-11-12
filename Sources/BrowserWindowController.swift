@@ -29,6 +29,7 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
     private let urlBar = URLBar()
     private var urlField: URLField { urlBar.field }
     private let statusPill = StatusPill()
+    private let plusButton = NSButton()
 
     private let findRow = BarBackgroundView()
     private let findField = NSTextField()
@@ -118,6 +119,15 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
                                      tip: "Ad & tracker blocking",
                                      target: self, action: #selector(toggleBlocking))
 
+        // The new-tab `+` moved here from the tab strip: same control, same glyph, same tip.
+        plusButton.bezelStyle = .accessoryBarAction
+        plusButton.isBordered = false
+        plusButton.image = NSImage(systemSymbolName: "plus", accessibilityDescription: "New Tab")
+        plusButton.imageScaling = .scaleProportionallyDown
+        plusButton.target = self
+        plusButton.action = #selector(newTabFromToolbar)
+        plusButton.toolTip = "New Tab (\u{2318}T)"
+
         urlField.delegate = self
         urlField.target = self
         urlField.action = #selector(urlFieldCommitted)
@@ -128,8 +138,8 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
             self.focusWebContent()
         }
 
-        [backButton, forwardButton, reloadButton, urlBar, bookmarkButton,
-         shieldButton, statusPill].forEach { toolbarRow.addSubview($0!) }
+        [backButton, forwardButton, urlBar, reloadButton, bookmarkButton,
+         shieldButton, statusPill, plusButton].forEach { toolbarRow.addSubview($0!) }
 
         // Find bar
         findField.placeholderString = "Find on page"
@@ -163,13 +173,15 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
 
     private func layoutChrome() {
         let b = root.bounds
+        // Safari's stacking: the toolbar is the top row and the traffic lights sit over it,
+        // with the tab strip running the full width beneath.
         let trafficLightInset: CGFloat = 82
+        let sidebarSlot: CGFloat = 30   // empty slot where Safari's sidebar toggle would be
         let tabRow: CGFloat = 36
         let toolRow: CGFloat = 40
 
-        tabStrip.frame = NSRect(x: trafficLightInset, y: 0,
-                                width: max(0, b.width - trafficLightInset), height: tabRow)
-        toolbarRow.frame = NSRect(x: 0, y: tabRow, width: b.width, height: toolRow)
+        toolbarRow.frame = NSRect(x: 0, y: 0, width: b.width, height: toolRow)
+        tabStrip.frame = NSRect(x: 0, y: toolRow, width: b.width, height: tabRow)
         progressBar.frame = NSRect(x: 0, y: chromeTopHeight - 3, width: b.width, height: 3)
 
         findRow.frame = NSRect(x: 0, y: chromeTopHeight, width: b.width, height: findRowHeight)
@@ -188,11 +200,15 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
         // reads as a real target rather than a tight box around the glyph.
         let bw: CGFloat = 30, bh: CGFloat = 28
         let y = (toolRow - bh) / 2
-        backButton.frame = NSRect(x: 12, y: y, width: bw, height: bh)
-        forwardButton.frame = NSRect(x: 44, y: y, width: bw, height: bh)
-        reloadButton.frame = NSRect(x: 78, y: y, width: bw, height: bh)
+        // Left cluster: clears the traffic lights, then leaves Safari's sidebar slot empty.
+        let leftStart = trafficLightInset + sidebarSlot
+        backButton.frame = NSRect(x: leftStart, y: y, width: bw, height: bh)
+        forwardButton.frame = NSRect(x: leftStart + bw + 2, y: y, width: bw, height: bh)
 
+        // Right cluster, filled from the trailing edge: + , pill, shield, bookmark, reload.
         var right = b.width - 12
+        plusButton.frame = NSRect(x: right - bw, y: y, width: bw, height: bh)
+        right -= bw + 2
         if Config.shared.showMemoryReadout {
             statusPill.isHidden = false
             let w = max(64, min(190, statusPill.fittingWidth))
@@ -204,9 +220,12 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
         shieldButton.frame = NSRect(x: right - bw, y: y, width: bw, height: bh)
         right -= bw + 2
         bookmarkButton.frame = NSRect(x: right - bw, y: y, width: bw, height: bh)
-        right -= bw + 8
+        right -= bw + 2
+        reloadButton.frame = NSRect(x: right - bw, y: y, width: bw, height: bh)
+        right -= bw + 10
 
-        let urlX: CGFloat = 116
+        // Address field flexes between the clusters, with an equal margin on each side.
+        let urlX = forwardButton.frame.maxX + 10
         let fieldH: CGFloat = 28
         urlBar.frame = NSRect(x: urlX, y: (toolRow - fieldH) / 2,
                               width: max(90, right - urlX), height: fieldH)
@@ -343,6 +362,8 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
     }
 
     // MARK: - Chrome refresh
+
+    @objc private func newTabFromToolbar() { newTab() }
 
     func refreshChrome() {
         layoutChrome()

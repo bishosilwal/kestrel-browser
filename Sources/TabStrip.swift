@@ -213,8 +213,6 @@ final class TabItemView: NSView {
 final class TabStripView: NSView {
     weak var delegate: TabStripDelegate?
     private var items: [TabItemView] = []
-    private let newTabButton = NSButton()
-
     private var dragIndex: Int?
     private var dragGrabX: CGFloat = 0     // where in the tab the press landed
     private var dragPointerX: CGFloat = 0  // pointer, strip coordinates
@@ -223,19 +221,9 @@ final class TabStripView: NSView {
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
-        newTabButton.bezelStyle = .accessoryBarAction
-        newTabButton.isBordered = false
-        newTabButton.image = NSImage(systemSymbolName: "plus", accessibilityDescription: "New Tab")
-        newTabButton.imageScaling = .scaleProportionallyDown
-        newTabButton.target = self
-        newTabButton.action = #selector(newTab)
-        newTabButton.toolTip = "New Tab (\u{2318}T)"
-        addSubview(newTabButton)
     }
 
     required init?(coder: NSCoder) { fatalError() }
-
-    @objc private func newTab() { delegate?.tabStripDidRequestNewTab() }
 
     /// Rebuild only when the tab count changes; otherwise update in place so
     /// typing in a page title does not churn the view hierarchy.
@@ -281,12 +269,8 @@ final class TabStripView: NSView {
     }
 
     private func layoutTabs() {
-        let buttonW: CGFloat = 28
-        let available = max(0, bounds.width - buttonW - 4)
-        guard !items.isEmpty else {
-            newTabButton.frame = NSRect(x: 2, y: (bounds.height - 22) / 2, width: buttonW, height: 22)
-            return
-        }
+        let available = max(0, bounds.width - 6)
+        guard !items.isEmpty else { return }
         let w = tabWidth(available: available)
         var x: CGFloat = 0
         for (i, v) in items.enumerated() {
@@ -298,8 +282,6 @@ final class TabStripView: NSView {
             let clamped = max(0, min(available - w, dragPointerX - dragGrabX))
             items[d].frame = NSRect(x: clamped, y: 0, width: w, height: bounds.height)
         }
-        newTabButton.frame = NSRect(x: min(x + 3, bounds.width - buttonW - 2),
-                                    y: (bounds.height - 22) / 2, width: buttonW, height: 22)
     }
 
     // MARK: - Drag to reorder
@@ -315,7 +297,7 @@ final class TabStripView: NSView {
     private func updateDrag(_ pointerInWindow: NSPoint) {
         guard let from = dragIndex else { return }
         dragPointerX = convert(pointerInWindow, from: nil).x
-        let available = max(0, bounds.width - 32)
+        let available = max(0, bounds.width - 6)
         let w = tabWidth(available: available)
         guard w > 0 else { return }
 
