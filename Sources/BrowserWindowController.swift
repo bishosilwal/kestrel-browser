@@ -49,6 +49,7 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
 
     private let chromeTopHeight: CGFloat = 36 + 38
     private var findRowHeight: CGFloat { findVisible ? 34 : 0 }
+    private var isChromeReady = false
 
     var activeTab: Tab? { tabs.indices.contains(activeIndex) ? tabs[activeIndex] : nil }
 
@@ -61,7 +62,6 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
                          backing: .buffered, defer: false)
         super.init(window: w)
 
-        w.delegate = self
         w.title = isPrivate ? "Kestrel Private" : "Kestrel"
         w.titleVisibility = .hidden
         w.titlebarAppearsTransparent = true
@@ -74,6 +74,10 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
 
         buildChrome()
         w.contentView = root
+
+        isChromeReady = true
+        w.delegate = self
+        layoutChrome()
 
         startHibernationTimer()
         startMemoryReadout()
@@ -162,6 +166,11 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
     override func windowDidLoad() { super.windowDidLoad() }
 
     private func layoutChrome() {
+        guard isChromeReady,
+              let win = window, win.frame.width > 0, win.frame.height > 0,
+              root.bounds.width > 0,
+              backButton != nil, forwardButton != nil, reloadButton != nil,
+              bookmarkButton != nil, shieldButton != nil else { return }
         let b = root.bounds
         let trafficLightInset: CGFloat = 82
         let tabRow: CGFloat = 36
@@ -221,7 +230,10 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate {
         }
     }
 
-    func windowDidResize(_ notification: Notification) { layoutChrome() }
+    func windowDidResize(_ notification: Notification) {
+        guard isChromeReady, let win = window, notification.object as? NSWindow === win else { return }
+        layoutChrome()
+    }
 
     func windowDidBecomeKey(_ notification: Notification) {
         activeTab?.lastActive = Date()
