@@ -85,7 +85,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        if !flag { makeWindow().newTab() }
+        if controllers.isEmpty {
+            makeWindow().newTab()
+        } else if !flag {
+            front?.window?.makeKeyAndOrderFront(nil)
+        }
         return true
     }
 
